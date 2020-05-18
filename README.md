@@ -1,28 +1,43 @@
 # pico-speako
-Just started the development on this node package for text to speech on linux/raspberry pi.
+This node package handles text to speech on linux/raspberry pi, supporting mutliple output devices (as arguments) and suppresses repeated calls.
 
-I needed a way to get audible feedback from my raspberry pi while I was not watching the terminal. I am often testing the pin inputs from far away. The existing packages had the occasional error, and also could not handle many successive calls. Successive calls of the same message or type of message are suppressed while one is already playing.
+I needed a way to get audible feedback from my raspberry pi while I was not watching the terminal. I am often testing the pin inputs from far away. The existing packages had the occasional error, and also could not handle many successive calls. pico-speako ignores successive calls of the same message or type of message while one is already playing.
 
 In addition, I needed to specify to send the audio to different devices on the fly.
 
-You will need to install pico speaker, which has different needs whether you are on Stretch or Buster. TODO
+You will need to install pico speaker, which will need some libraries added on Stretch (see below).
+
 If you want to use sound output besides the default output, you will need to configure your [asound](https://www.alsa-project.org/wiki/Asoundrc).
 
 This uses aplay, which is already installed. Make sure the volume is set at a reasonable level with the `alsamixer`.
 
 ## Installation
 
+Install pico - please refer to offical documentation to get pico installed on your system, but these notes work for me:
 If you are using Raspbian Stretch, you need to add these non-free libs. This is not needed in older versions (Buster).
-`wget -q https://ftp-master.debian.org/keys/release-10.asc -O- | sudo apt-key add - echo "deb http://deb.debian.org/debian buster non-free" | sudo tee -a /etc/apt/sources.list`
-Then run `apt-get update`.
+
+```bash
+wget -q https://ftp-master.debian.org/keys/release-10.asc -O- | sudo apt-key add - echo "deb http://deb.debian.org/debian buster non-free" | sudo tee -a /etc/apt/sources.list
+```
+Then, of course, run
+```bash
+apt-get update
+```
 
 Install pico:
-`sudo apt-get install libttspico0 libttspico-utils libttspico-data alsa-utils -y`
-You can test pico with `pico2wave -l=en-GB -w=/tmp/pico.wav "big chungus" && aplay /tmp/pico.wav`
+```bash
+sudo apt-get install libttspico0 libttspico-utils libttspico-data alsa-utils -y
+```
+You can test pico with
+```bash
+pico2wave -l=en-GB -w=/tmp/pico.wav "big chungus" && aplay /tmp/pico.wav
+```
 If you can't get that working, this package will be useless.
 
 Install pioco-speako:
-`npm -i pico-speako`
+```bash
+npm -i pico-speako
+```
 
 ## Configuration
 
@@ -33,17 +48,19 @@ This is passed as a single argument at any time, try it on the require (see belo
 
 ## Usage
 
-`const say = require('pico-speako') // => loads the function to read English.`
-`const say = require('pico-speako')('es-ES') // => loads the function to read Spanish.`
-
-`say('What', [where,] [type])`
+```javascript
+const say = require('pico-speako') // => loads the function to read English.`
+const say = require('pico-speako')('es-ES') // => loads the function to read Spanish.
+say('What', [where,] [type])
+````
 
 ### Say
 
 ```javascript
 say('hello') // => "Hello" is spoken from the default speakers. 
-say('hello', 'antechamber') // => "Hello" is spoken from the speaker set connected to a device named "antechamber" in the asoundrc.
-say('error', 'antechamber', 'info') // => "error" is spoken from the speaker set connected to a device named "antechamber" in the asoundrc, and if other calls to say() with the same type (info) happen before this call is finished, they will be suppressed.
+say('test', 'antechamber') // => "test" is spoken from the speaker set connected to a device named "antechamber" in the asoundrc.
+say('problem', 'antechamber', 'info') // => "problem" is spoken from the speaker set connected to a device named "antechamber" in the asoundrc,
+			// ...and if other calls to say() with the same type (info) happen before this call is finished, they will be suppressed.
 ```
 
 #### What
