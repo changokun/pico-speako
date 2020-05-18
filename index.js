@@ -7,9 +7,17 @@ var md5 = require('md5')
 var fs = require('fs')
 const {spawn} = require('child_process')
 
-
 var currently_saying = []
+var lang = 'en-GB'
 function say(what, where='default', type) {
+
+	// trying a thing where config is passed as an argument so that you can do it on the require line eg require('pico-speako')('it-IT')
+	// I suppose that means we could accept a default audio where as well.
+	// languages available from pico-speaker (May 2020)
+	if(['en-US', 'en-GB', 'de-DE', 'es-ES', 'fr-FR', 'it-IT'].indexOf(what) !== -1) {
+		lang = what
+		return
+	}
 	// type is a way to provide shortwhat - ie you can have similar messages suppressed while one of them is already playing.
 	// stashing the first x chars in currently_saying, so that we don't have horrendous repeating texts. using the first x chars means related messages will be suppressed. this may need adjustment.
 	var short_what = type || what.substr(0, 10) || what
@@ -20,11 +28,11 @@ function say(what, where='default', type) {
 	debug(`Say “${what}”`)
 	const file_path = '/tmp/' + md5(what) + '.wav'
 	if( ! fs.existsSync(file_path)) {
-		console.log('making file_path', file_path)
-		console.log('pico2wave -l en-GB -w', file_path, what)
+		// console.log('making file_path', file_path)
+		// console.log('pico2wave -l en-GB -w', file_path, what)
 	  var sub = spawn('pico2wave', [
 			"-l",
-			"en-GB",
+			lang,
 			"-w",
 			file_path,
 			what
@@ -32,7 +40,7 @@ function say(what, where='default', type) {
 		sub.stderr.on('close', function(){ say(what, where) })
 	} else {
 		currently_saying.push(short_what)
-		where = process.env.AUDIO || where
+		where = process.env.PICO_SPEAKO_DEVICE || where
 		// console.log(`aplay -D ${where} ${file_path}`)
 	  var sub = spawn('aplay', [
 			"-D",
