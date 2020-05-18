@@ -15,6 +15,10 @@
     "raspberry",
     "pi"
   ],
+  "repository": {
+	  "type" : "git",
+	  "url" : "https://github.com/changokun/pico-speako.git"
+	}
   "author": "Alex Brown",
   "license": "ISC",
   "dependencies": {
