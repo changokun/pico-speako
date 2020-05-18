@@ -1,6 +1,6 @@
 {
   "name": "pico-speako",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Spawns sub processes to convert text to speech using pico-speaker and aplay.",
   "main": "index.js",
   "scripts": {
