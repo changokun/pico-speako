@@ -1,0 +1,23 @@
+{
+  "name": "pico-speako",
+  "version": "1.0.0",
+  "description": "Spawns sub processes to convert text to speech using pico-speaker and aplay.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No test specified, yet.\""
+  },
+  "keywords": [
+    "pico",
+    "TTS",
+    "text",
+    "to",
+    "speech",
+    "raspberry",
+    "pi"
+  ],
+  "author": "Alex Brown",
+  "license": "ISC",
+  "dependencies": {
+    "md5": "^2.2.1"
+  }
+}
